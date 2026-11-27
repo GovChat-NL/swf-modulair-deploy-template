@@ -1,0 +1,14 @@
+# Welke onderdelen er op acceptatie draaien, elk met een adres en een versie. Verder niets.
+namespace: govchat-acc
+manager:
+  url: https://github.com/GovChat-NL/modulair-manager
+  version: v0.1.0
+core:
+  url: https://github.com/GovChat-NL/modulair-kern
+  version: v0.1.0
+apps:
+  - url: https://github.com/GovChat-NL/modulair-app-time
+    version: v1.0.0
+# Van welke adressen deze organisatie onderdelen accepteert.
+allowedSources:
+  - https://github.com/GovChat-NL/

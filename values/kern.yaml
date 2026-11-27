@@ -1,0 +1,23 @@
+# De instellingen van de kern voor deze organisatie. Vervang elke voorbeeldwaarde.
+# Wat per omgeving verschilt (het webadres), staat in values/<omgeving>/kern.yaml.
+# Hier staan geen Secrets: zie scripts/create-secrets.sh.
+
+librechat:
+  configEnv:
+    # Microsoft Entra ID. Redirect URI in the app registration: the address above,
+    # followed by /oauth/openid/callback
+    OPENID_ISSUER: "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/"
+    OPENID_CLIENT_ID: "00000000-0000-0000-0000-000000000000"
+    # The model in Azure AI Foundry / Azure OpenAI. The base URL ends in the deployment name.
+    AZURE_INSTANCE_NAME: "example-resource"
+    AZURE_DEPLOYMENT_NAME: "example-deployment"
+    AZURE_API_VERSION: "2024-10-21"
+    AZURE_BASE_URL: "https://example-resource.cognitiveservices.azure.com/openai/deployments/example-deployment"
+
+# Storage class, if the cluster default is not the right one.
+# mongodb:
+#   persistence:
+#     storageClass: longhorn
+# librechat:
+#   imageVolume:
+#     storageClassName: longhorn

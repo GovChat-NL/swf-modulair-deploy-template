@@ -1,0 +1,21 @@
+# Wat voor acceptatie anders is dan in values/kern.yaml: het webadres en de toegang van buiten.
+librechat:
+  configEnv:
+    DOMAIN_CLIENT: "https://govchat-acc.example.nl"
+    DOMAIN_SERVER: "https://govchat-acc.example.nl"
+
+ingress:
+  className: "" # for example nginx or haproxy
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Answers are streamed. Give the ingress a long read timeout (for example 600s),
+    # in the annotation of your ingress controller.
+  hosts:
+    - host: govchat-acc.example.nl
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: librechat-tls
+      hosts:
+        - govchat-acc.example.nl

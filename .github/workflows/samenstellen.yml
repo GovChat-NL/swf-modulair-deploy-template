@@ -1,0 +1,26 @@
+# Controleert bij elk pull request dat deploy/ en stack.lock passen bij stacks/ en values/.
+# Draait de app-manager in de versie uit stacks/<omgeving>.yaml. Schrijft en pusht niets.
+name: samenstellen
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  controleer:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        omgeving: [acceptatie, productie]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Haal de app-manager op in de versie uit de lijst
+        run: |
+          url=$(awk '/^manager:/{m=1;next} m&&/url:/{print $2;exit}' stacks/${{ matrix.omgeving }}.yaml)
+          version=$(awk '/^manager:/{m=1;next} m&&/version:/{print $2;exit}' stacks/${{ matrix.omgeving }}.yaml)
+          git clone --quiet --depth 1 --branch "$version" "$url" "$RUNNER_TEMP/manager"
+          cd "$RUNNER_TEMP/manager" && npm ci --omit=dev
+      - name: Controleer
+        run: node "$RUNNER_TEMP/manager/manager.js" samenstellen ${{ matrix.omgeving }} --controleer
