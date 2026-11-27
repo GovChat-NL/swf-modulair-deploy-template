@@ -1,10 +1,10 @@
 > # ⚠️ LET OP: tijdelijke naam
-> Deze repository heet nu `modulair-deploy-template` omdat dit een pilot is voor een modulaire GovChat,
+> Deze repository heet nu `swf-modulair-deploy-template` omdat dit een pilot is voor een modulaire GovChat,
 > gestart door Súdwest-Fryslân met toestemming van GovChat-NL. Werkt de pilot en is iedereen
 > het eens, dan kan de naam in de toekomst `GovChat-NL-deploy-template` worden.
-> Deze uitrolbasis is tijdelijk en hoort bij `modulair-kern`.
+> Deze uitrolbasis is tijdelijk en hoort bij `swf-modulair-kern`.
 
-# modulair-deploy-template
+# swf-modulair-deploy-template
 
 De uitrolbasis van GovChat: het startpunt waar een organisatie **één keer** een eigen
 repository van maakt. In die eigen repository staan de keuzes van de organisatie: welke
@@ -14,10 +14,10 @@ Dit is één van vier repositories die bij elkaar horen:
 
 | Repository | Wat |
 |---|---|
-| [`modulair-kern`](https://github.com/GovChat-NL/modulair-kern) | de kale chat |
-| [`modulair-app-time`](https://github.com/GovChat-NL/modulair-app-time) | de proefapp, en het voorbeeld van hoe een app eruitziet |
-| [`modulair-manager`](https://github.com/GovChat-NL/modulair-manager) | de app-manager, die de uitrol samenstelt; hier staat ook het appcontract |
-| **`modulair-deploy-template`** | de uitrolbasis (deze repository) |
+| [`swf-modulair-kern`](https://github.com/GovChat-NL/swf-modulair-kern) | de kale chat |
+| [`swf-modulair-app-time`](https://github.com/GovChat-NL/swf-modulair-app-time) | de proefapp, en het voorbeeld van hoe een app eruitziet |
+| [`swf-modulair-manager`](https://github.com/GovChat-NL/swf-modulair-manager) | de app-manager, die de uitrol samenstelt; hier staat ook het appcontract |
+| **`swf-modulair-deploy-template`** | de uitrolbasis (deze repository) |
 
 ## Wat erin zit
 
@@ -43,7 +43,7 @@ standaardlijst: de kern met de proefapp.
 Geen fork. Maak één keer een kopie; daarna is er geen koppeling meer.
 
 ```sh
-git clone https://github.com/GovChat-NL/modulair-deploy-template.git govchat-deploy
+git clone https://github.com/GovChat-NL/swf-modulair-deploy-template.git govchat-deploy
 cd govchat-deploy
 rm -rf .git && git init -b main
 git remote add origin https://gitea.example.nl/<organisatie>/govchat-deploy.git
@@ -68,10 +68,10 @@ Nodig: [Node.js](https://nodejs.org) 20 of nieuwer, `git`, en de app-manager in 
 die in `stacks/<omgeving>.yaml` staat.
 
 ```sh
-git clone --branch v0.1.0 https://github.com/GovChat-NL/modulair-manager.git ../modulair-manager
-(cd ../modulair-manager && npm ci)
+git clone --branch v0.1.0 https://github.com/GovChat-NL/swf-modulair-manager.git ../swf-modulair-manager
+(cd ../swf-modulair-manager && npm ci)
 
-node ../modulair-manager/manager.js samenstellen acceptatie
+node ../swf-modulair-manager/manager.js samenstellen acceptatie
 git diff          # dit is wat er gaat veranderen
 ```
 
@@ -90,7 +90,7 @@ Een app toevoegen is één regel met een adres en een versie:
 
 ```yaml
 apps:
-  - url: https://github.com/GovChat-NL/modulair-app-time
+  - url: https://github.com/GovChat-NL/swf-modulair-app-time
     version: v1.0.0
 ```
 
@@ -104,11 +104,11 @@ Desktop, k3d of kind). `values/lokaal/kern.yaml` zet een stubmodel en een lokaal
 in de plaats van Azure en Entra.
 
 ```sh
-node ../modulair-manager/manager.js samenstellen lokaal
+node ../swf-modulair-manager/manager.js samenstellen lokaal
 scripts/create-secrets.sh govchat
-kubectl -n govchat apply -f .manager-cache/github.com_GovChat-NL_modulair-kern/v0.1.0/local/services.yaml
-node ../modulair-manager/manager.js lokaal lokaal        # toont de helm-opdrachten
-node ../modulair-manager/manager.js lokaal lokaal | sh   # voert ze uit
+kubectl -n govchat apply -f .manager-cache/github.com_GovChat-NL_swf-modulair-kern/v0.1.0/local/services.yaml
+node ../swf-modulair-manager/manager.js lokaal lokaal        # toont de helm-opdrachten
+node ../swf-modulair-manager/manager.js lokaal lokaal | sh   # voert ze uit
 kubectl -n govchat port-forward service/librechat-librechat 3080:3080
 ```
 
@@ -117,7 +117,7 @@ Een eigen app in aanbouw wijs je aan met een map in plaats van een adres:
 ```yaml
 # stacks/lokaal.yaml
 apps:
-  - url: ../modulair-app-mijnapp
+  - url: ../swf-modulair-app-mijnapp
 ```
 
 ## Updaten

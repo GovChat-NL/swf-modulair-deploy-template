@@ -1,13 +1,13 @@
 # Welke onderdelen er op productie draaien, elk met een adres en een versie. Verder niets.
 namespace: govchat
 manager:
-  url: https://github.com/GovChat-NL/modulair-manager
+  url: https://github.com/GovChat-NL/swf-modulair-manager
   version: v0.1.0
 core:
-  url: https://github.com/GovChat-NL/modulair-kern
+  url: https://github.com/GovChat-NL/swf-modulair-kern
   version: v0.1.0
 apps:
-  - url: https://github.com/GovChat-NL/modulair-app-time
+  - url: https://github.com/GovChat-NL/swf-modulair-app-time
     version: v1.0.0
 # Van welke adressen deze organisatie onderdelen accepteert.
 allowedSources:
