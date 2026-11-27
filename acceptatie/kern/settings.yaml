@@ -1,8 +1,8 @@
-# Wat voor productie anders is dan in values/kern.yaml: het webadres en de toegang van buiten.
+# The settings of the kern for acceptatie only: the web address and the access from the outside.
 librechat:
   configEnv:
-    DOMAIN_CLIENT: "https://govchat.example.nl"
-    DOMAIN_SERVER: "https://govchat.example.nl"
+    DOMAIN_CLIENT: "https://govchat-acc.example.nl"
+    DOMAIN_SERVER: "https://govchat-acc.example.nl"
 
 ingress:
   className: "" # for example nginx or haproxy
@@ -11,11 +11,11 @@ ingress:
     # Answers are streamed. Give the ingress a long read timeout (for example 600s),
     # in the annotation of your ingress controller.
   hosts:
-    - host: govchat.example.nl
+    - host: govchat-acc.example.nl
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: librechat-tls
       hosts:
-        - govchat.example.nl
+        - govchat-acc.example.nl

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Runs the govchat command in a fixed version. To use a newer version of the command,
+# change the version in the last line with a pull request.
+# For development of the command: set GOVCHAT_CLI to the path of govchat.js.
+[ -n "${GOVCHAT_CLI:-}" ] && exec node "$GOVCHAT_CLI" "$@"
+exec npx --yes github:GovChat-NL/swf-modulair-manager#v0.2.0 "$@"

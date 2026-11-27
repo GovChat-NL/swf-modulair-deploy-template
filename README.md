@@ -1,133 +1,188 @@
-> # ⚠️ LET OP: tijdelijke naam
-> Deze repository heet nu `swf-modulair-deploy-template` omdat dit een pilot is voor een modulaire GovChat,
-> gestart door Súdwest-Fryslân met toestemming van GovChat-NL. Werkt de pilot en is iedereen
-> het eens, dan kan de naam in de toekomst `GovChat-NL-deploy-template` worden.
-> Deze uitrolbasis is tijdelijk en hoort bij `swf-modulair-kern`.
+> # ⚠️ NOTE: temporary name
+> This repository has the name `swf-modulair-deploy-template` because this is a pilot for a
+> modular GovChat. Súdwest-Fryslân started the pilot with the approval of GovChat-NL. If the
+> pilot is a success and all parties agree, the name can become `GovChat-NL-deploy-template`.
 
 # swf-modulair-deploy-template
 
-De uitrolbasis van GovChat: het startpunt waar een organisatie **één keer** een eigen
-repository van maakt. In die eigen repository staan de keuzes van de organisatie: welke
-kern, welke apps, in welke versie en met welke instellingen. Er staat geen code in.
+This is the start point for the deploy repository of an organisation. An organisation
+makes its own repository from this template **one time**. That repository contains the
+decisions of the organisation: which kern, which apps, which versions and which settings.
+Rancher Fleet reads that repository and deploys it.
 
-Dit is één van vier repositories die bij elkaar horen:
+This is one of four repositories that belong together:
 
-| Repository | Wat |
+| Repository | Function |
 |---|---|
-| [`swf-modulair-kern`](https://github.com/GovChat-NL/swf-modulair-kern) | de kale chat |
-| [`swf-modulair-app-time`](https://github.com/GovChat-NL/swf-modulair-app-time) | de proefapp, en het voorbeeld van hoe een app eruitziet |
-| [`swf-modulair-manager`](https://github.com/GovChat-NL/swf-modulair-manager) | de app-manager, die de uitrol samenstelt; hier staat ook het appcontract |
-| **`swf-modulair-deploy-template`** | de uitrolbasis (deze repository) |
+| [`swf-modulair-kern`](https://github.com/GovChat-NL/swf-modulair-kern) | The basic chat. |
+| [`swf-modulair-app-time`](https://github.com/GovChat-NL/swf-modulair-app-time) | The trial app, and the example of an app. |
+| [`swf-modulair-manager`](https://github.com/GovChat-NL/swf-modulair-manager) | The `govchat` command, and the rules for an app. |
+| **`swf-modulair-deploy-template`** | The start point for a deploy repository (this repository). |
 
-## Wat erin zit
+## The rule
 
-| Waar | Van wie | Wat |
-|---|---|---|
-| `stacks/<omgeving>.yaml` | de organisatie | **Welke** onderdelen, elk met een adres en een versie. Verder niets |
-| `values/<naam>.yaml` | de organisatie | **Hoe** een onderdeel bij deze organisatie is ingesteld |
-| `values/<omgeving>/<naam>.yaml` | de organisatie | Wat per omgeving verschilt, zoals het webadres |
-| `branding/` en `values/branding.yaml` | de organisatie | Het logo en de pictogrammen |
-| `deploy/<omgeving>/` | de app-manager | Wat er wordt uitgerold. Gegenereerd, nooit met de hand |
-| `stack.lock` | de app-manager | Per versie de vastgelegde commit |
-| `scripts/create-secrets.sh` | | Maakt de Secrets in het cluster. Secrets staan nooit in Git |
-| `.github/workflows/samenstellen.yml` | | Controleert bij elk pull request dat `deploy/` past bij `stacks/` en `values/` |
+Each change is a pull request. A second person approves it. The merge is the deployment.
+Nobody changes the cluster manually.
 
-Een organisatie past alleen `stacks/`, `values/` en `branding/` aan.
+## The files
 
-De omgevingen zijn `acceptatie` (namespace `govchat-acc`), `productie` (namespace `govchat`)
-en `lokaal` voor de eigen laptop. De lijsten in `stacks/` zijn tijdens de pilot ook de
-standaardlijst: de kern met de proefapp.
+```
+govchat                        starts the govchat command in a fixed version
+govchat.yaml                   the environments and the permitted sources
+shared/kern.yaml               YOU: settings of the kern for all environments
+shared/branding.yaml           generated from the files in branding/
+branding/                      YOU: the logo and the icons
+acceptatie/
+  kern/
+    settings.yaml              YOU: the web address and the ingress of this environment
+    kern.yaml                  copy from the kern repository. Do not edit.
+    kern-values.yaml           copy from the kern repository. Do not edit.
+    generated.yaml             GENERATED. Do not edit.
+    fleet.yaml                 GENERATED. Do not edit.
+  apps/
+    time/
+      app.yaml                 copy from the app repository. Do not edit.
+      settings.yaml            YOU: the settings of the app (only if the app has settings)
+      manifests.yaml           GENERATED. Do not edit.
+      fleet.yaml               GENERATED. Do not edit.
+productie/                     the same structure
+lokaal/                        the same structure, for a test cluster on your computer
+```
 
-## Een eigen repository maken
+- You write the files with `YOU`.
+- The `govchat` command writes all other files.
+- A folder in `apps/` means that the app is installed.
 
-Geen fork. Maak één keer een kopie; daarna is er geen koppeling meer.
+The environments are `acceptatie` (namespace `govchat-acc`), `productie` (namespace
+`govchat`) and `lokaal`. The template contains the kern and the trial app `time`.
+
+## What you need
+
+- [Node.js](https://nodejs.org) 20 or newer, and `git`.
+- For the commands `secrets`, `verify` and `local`: `kubectl`, and `helm` for `local`.
+- On Windows: use WSL2.
+
+Run `./govchat --help` to see all commands.
+
+## Make your own repository (one time)
+
+Do not make a fork. Make a copy. After that, there is no connection to this template.
 
 ```sh
 git clone https://github.com/GovChat-NL/swf-modulair-deploy-template.git govchat-deploy
 cd govchat-deploy
 rm -rf .git && git init -b main
-git remote add origin https://gitea.example.nl/<organisatie>/govchat-deploy.git
+git remote add origin https://gitea.example.nl/<organisation>/govchat-deploy.git
 ```
 
-Daarna:
+Then:
 
-1. Vul `values/kern.yaml` in: de gegevens van Entra ID en van het model in Azure.
-2. Vul `values/acceptatie/kern.yaml` en `values/productie/kern.yaml` in: het webadres en de toegang van buiten.
-3. Zet zo nodig een eigen logo in `branding/` en draai `scripts/make-branding.sh`.
-4. Stel samen (zie hieronder), commit en push.
-5. Maak de Secrets, per omgeving: `AZURE_MODEL_KEY=... OPENID_CLIENT_SECRET=... scripts/create-secrets.sh govchat-acc`
-6. Laat Rancher naar de repository kijken, branch `main`, met de paden `deploy/acceptatie` en `deploy/productie`.
+1. Give the values of your organisation:
+   ```sh
+   ./govchat init
+   ```
+   The command asks for the web address of each environment, and for the values of Entra ID and Azure OpenAI.
+2. Look at the ingress settings in `acceptatie/kern/settings.yaml` and `productie/kern/settings.yaml`. Change them for your cluster. Then run `./govchat build`.
+3. If you have your own logo: replace the files in `branding/` and run `./govchat branding`. Then run `./govchat build`.
+4. Commit and push.
+5. Protect the branch `main` on your Git server: a pull request is required, with one approval from a second person.
+6. Create the Secrets, for each environment:
+   ```sh
+   AZURE_MODEL_KEY=... OPENID_CLIENT_SECRET=... ./govchat secrets --env acceptatie
+   ```
+   Secrets are never in Git.
+7. In Rancher, make one Git repository (`GitRepo`) for each environment. Use the branch `main`. Use the path `acceptatie` for the first and `productie` for the second.
 
-In Entra ID heeft de app-registratie per omgeving de redirect-URI
-`https://<webadres>/oauth/openid/callback` nodig, en de app-rollen `govchat-user` en
-`govchat-admin`. De rollen moeten in het ID-token staan (claim `roles`).
+In Entra ID, the app registration needs for each environment the redirect URI
+`https://<web address>/oauth/openid/callback` and the app roles `govchat-user` and
+`govchat-admin`. The roles must be in the ID token (claim `roles`).
 
-## Samenstellen
+## Add an app
 
-Nodig: [Node.js](https://nodejs.org) 20 of nieuwer, `git`, en de app-manager in de versie
-die in `stacks/<omgeving>.yaml` staat.
+1. Add the app to `acceptatie`:
+   ```sh
+   ./govchat app add time --env acceptatie
+   ```
+   Run `./govchat app list` to see the known apps. For an app that is not in the list, give the full address.
+2. If the command shows settings or Secrets, do what the command tells you.
+3. Look at the change with `git diff`. Commit on a branch and open a pull request.
+4. A second person looks at the pull request and merges it. Fleet deploys the change.
+5. Check the environment:
+   ```sh
+   ./govchat verify --env acceptatie
+   ```
+
+## Move a change to production
+
+1. Test on `acceptatie`.
+2. Copy the versions to `productie`:
+   ```sh
+   ./govchat promote
+   ```
+3. Commit on a branch and open a second pull request. This merge is the release.
+4. Run `./govchat verify --env productie`.
+
+To go back to an earlier version, give that version: `./govchat app add time --version v2.0.0 --env productie`.
+This is also a pull request.
+
+## Remove an app
 
 ```sh
-git clone --branch v0.1.0 https://github.com/GovChat-NL/swf-modulair-manager.git ../swf-modulair-manager
-(cd ../swf-modulair-manager && npm ci)
-
-node ../swf-modulair-manager/manager.js samenstellen acceptatie
-git diff          # dit is wat er gaat veranderen
+./govchat app remove time --env acceptatie
 ```
 
-De app-manager pusht niets. Commit op een branch, open een pull request en laat een tweede
-persoon meekijken. **De merge is de uitrol.**
+Commit on a branch and open a pull request. After the merge, Fleet deletes all parts of
+the app.
 
-## Een wijziging: eerst acceptatie, dan productie
-
-1. Pas `stacks/acceptatie.yaml` aan (een nieuwe versie, een app erbij of eraf) en stel samen. Pull request, review, merge.
-2. Test op acceptatie.
-3. Zet precies dezelfde versie in `stacks/productie.yaml` en stel samen. Een eigen pull request. Die merge is het releasemoment.
-
-Terugdraaien is de vorige versie terugzetten, ook met een pull request.
-
-Een app toevoegen is één regel met een adres en een versie:
-
-```yaml
-apps:
-  - url: https://github.com/GovChat-NL/swf-modulair-app-time
-    version: v1.0.0
-```
-
-Heeft de app instellingen, dan komen die in `values/<naam>.yaml`. De app-manager meldt
-wat verplicht is en nog ontbreekt.
-
-## Op de eigen laptop
-
-Voor wie een app bouwt of een versie wil proberen, op een eigen wegwerpcluster (Rancher
-Desktop, k3d of kind). `values/lokaal/kern.yaml` zet een stubmodel en een lokaal account
-in de plaats van Azure en Entra.
+## Change the version of the kern
 
 ```sh
-node ../swf-modulair-manager/manager.js samenstellen lokaal
-scripts/create-secrets.sh govchat
-kubectl -n govchat apply -f .manager-cache/github.com_GovChat-NL_swf-modulair-kern/v0.1.0/local/services.yaml
-node ../swf-modulair-manager/manager.js lokaal lokaal        # toont de helm-opdrachten
-node ../swf-modulair-manager/manager.js lokaal lokaal | sh   # voert ze uit
+./govchat kern set v0.2.0 --env acceptatie
+```
+
+Use `latest` for the newest version. The pull request shows each change in the settings of
+the kern.
+
+## Test on your computer
+
+Use a test cluster on your computer (kind, k3d or Rancher Desktop). The environment
+`lokaal` uses a replacement model and a local account. Azure and Entra ID are not necessary.
+
+```sh
+./govchat local up
+./govchat verify --env lokaal
 kubectl -n govchat port-forward service/librechat-librechat 3080:3080
 ```
 
-Een eigen app in aanbouw wijs je aan met een map in plaats van een adres:
+Go to http://localhost:3080 and make an account. The replacement model always gives the
+same answer. It cannot call tools.
 
-```yaml
-# stacks/lokaal.yaml
-apps:
-  - url: ../swf-modulair-app-mijnapp
+To test an app that you are making, add it from its folder:
+
+```sh
+./govchat app add ../my-app --env lokaal
+./govchat local up
 ```
 
-## Updaten
+To stop: `./govchat local down`.
 
-Alles wat later verandert, zit in de kern, de apps en de app-manager, en die hebben elk een
-eigen versie. Updaten is een versie ophogen in `stacks/`, niet mergen met deze repository.
+## The check in a pull request
 
-## Herkomst
+The file `.github/workflows/check.yml` runs `./govchat check` for each pull request.
+Gitea Actions and GitHub Actions can run this file. The check fails if a person changed an
+input file and did not run `./govchat build`.
 
-De instellingen per organisatie, de branding en de scripts komen van de branch
-`swf/modulairKern` van `GovChat-NL/GovChat-NL`, commit `7e2474d` (20 november 2026). De
-licentie is nog niet gekozen; het voorstel is EUPL-1.2 en het besluit ligt bij de
-maintainers van GovChat-NL.
+## Updates
+
+The kern, the apps and the `govchat` command each have a version. To update, change a
+version in this repository. Do not merge with the template.
+
+- The kern: `./govchat kern set <version> --env <environment>`.
+- An app: `./govchat app add <name> --version <version> --env <environment>`.
+- The command: change the version in the file `govchat`.
+
+## Origin
+
+The settings, the branding and the structure come from the branch `swf/modulairKern` of
+`GovChat-NL/GovChat-NL`, commit `7e2474d` (20 November 2026). The licence is not chosen
+yet. The proposal is EUPL-1.2. The maintainers of GovChat-NL make the decision.

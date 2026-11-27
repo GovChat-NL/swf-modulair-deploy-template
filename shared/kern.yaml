@@ -1,0 +1,24 @@
+# The settings of the kern for this organisation, for all environments.
+# Replace each example value, or run: ./govchat init
+# The settings of one environment (the web address) are in <environment>/kern/settings.yaml.
+# There are no Secrets here. See: ./govchat secrets
+
+librechat:
+  configEnv:
+    # Microsoft Entra ID. The redirect URI in the app registration is the web address
+    # of the environment, followed by /oauth/openid/callback
+    OPENID_ISSUER: "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/"
+    OPENID_CLIENT_ID: "00000000-0000-0000-0000-000000000000"
+    # The model in Azure AI Foundry / Azure OpenAI. The base URL ends with the deployment name.
+    AZURE_INSTANCE_NAME: "example-resource"
+    AZURE_DEPLOYMENT_NAME: "example-deployment"
+    AZURE_API_VERSION: "2024-10-21"
+    AZURE_BASE_URL: "https://example-resource.cognitiveservices.azure.com/openai/deployments/example-deployment"
+
+# The storage class, if the default of the cluster is not the correct one.
+# mongodb:
+#   persistence:
+#     storageClass: longhorn
+# librechat:
+#   imageVolume:
+#     storageClassName: longhorn

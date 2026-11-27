@@ -1,6 +1,6 @@
-# Local test on a throwaway cluster (see README.md). Goes on top of values.yaml,
-# instead of the values of an organisation: no ingress, a local account instead of Entra,
-# and the stub model and the database from services.yaml.
+# The settings of the kern for a local test on your own computer.
+# No ingress, a local account as a replacement for Entra ID, and the replacement model
+# and the database from kern/local-services.yaml.
 
 mongodb:
   enabled: false

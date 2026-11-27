@@ -1,0 +1,18 @@
+# The settings of this deploy repository.
+
+# The address of the kern.
+kern: https://github.com/GovChat-NL/swf-modulair-kern
+
+# The addresses from which this organisation accepts the kern and apps.
+allowedSources:
+  - https://github.com/GovChat-NL/
+
+# The environments. Each environment has a folder with the same name.
+environments:
+  acceptatie:
+    namespace: govchat-acc
+  productie:
+    namespace: govchat
+  lokaal:                  # for a test cluster on your own computer
+    namespace: govchat
+    local: true
