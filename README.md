@@ -66,17 +66,14 @@ Run `./govchat --help` to see all commands.
 
 ## Make your own repository (one time)
 
-Do not make a fork. Download a copy. After that, there is no connection to this template.
+Do not make a fork. Make a copy. After that, there is no connection to this template.
 
 ```sh
-mkdir govchat-deploy
-curl -L https://github.com/GovChat-NL/swf-modulair-deploy-template/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 -C govchat-deploy
+git clone https://github.com/GovChat-NL/swf-modulair-deploy-template.git govchat-deploy
 cd govchat-deploy
-git init -b main
+rm -rf .git && git init -b main
 git remote add origin https://gitea.example.nl/<organisation>/govchat-deploy.git
 ```
-
-The download contains the files only. It does not contain the Git history of the template.
 
 Then:
 
